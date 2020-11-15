@@ -27,14 +27,8 @@ class Command(BaseModel):
         return cls(name=snap.id, **snap.to_dict())
 
 
-class CreateCommand(BaseModel):
-    cooldown: timedelta = timedelta(seconds=5)
-    required_role: Roles = Roles.GUEST
-    template: Optional[str] = None
-
-
 class PatchCommand(BaseModel):
-    name: str
+    name: Optional[str] = None
     game: Optional[int] = 0
     cooldown: Optional[timedelta]
     required_role: Optional[Roles]
