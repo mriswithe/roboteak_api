@@ -1,6 +1,6 @@
-from typing import Dict, List, Literal
+from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, constr, Field
 
 
 class AjaxSearch(BaseModel):
@@ -10,23 +10,22 @@ class AjaxSearch(BaseModel):
 
 class AjaxOrder(BaseModel):
     column: int
-    dir: Literal["asc", "desc"]
+    dir: constr(regex=r"^(asc|desc)$")
 
 
 class AjaxColumn(BaseModel):
-    data: str
+    data: Optional[str]
     name: str
     orderable: bool
     searchable: bool
     search: AjaxSearch
-    order: AjaxOrder
 
 
 class AjaxRequest(BaseModel):
     draw: int
     start: int
     length: int
-    order: AjaxOrder
+    order: List[AjaxOrder]
     columns: List[AjaxColumn]
 
 
