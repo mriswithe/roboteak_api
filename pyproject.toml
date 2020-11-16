@@ -1,0 +1,14 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "roboteak_api"
+author = "Andrew Kettmann"
+author-email = "akettmann@gmail.com"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore:Call to deprecated create function:DeprecationWarning"
+]
