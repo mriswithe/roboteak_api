@@ -1,11 +1,14 @@
 from typing import Optional, Union
 
 from fastapi import Depends, HTTPException, status
-from google.cloud.firestore_v1 import DocumentReference, DocumentSnapshot
+from google.cloud.firestore_v1 import (
+    AsyncDocumentReference,
+    DocumentSnapshot,
+)
 
 from models import Command
 from models.command_models import PatchCommand
-from .fs_deps import fs_get_doc_snap, fs_get_doc_ref
+from .fs_deps import fs_get_doc_ref, fs_get_doc_snap
 
 
 async def fs_cmd_get_snap(name: str, game: Optional[int] = 0) -> DocumentSnapshot:
@@ -16,7 +19,7 @@ async def fs_snap_from_command(cmd: Command) -> DocumentSnapshot:
     return await fs_get_doc_snap(cmd.document_path)
 
 
-async def fs_ref_from_command(cmd: Command) -> DocumentReference:
+async def fs_ref_from_command(cmd: Command) -> AsyncDocumentReference:
     return await fs_get_doc_ref(cmd.document_path)
 
 
