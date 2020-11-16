@@ -2,21 +2,31 @@ games:
   twitch_id: int
   name: str
   box_art_url: str
-commands:
-  name: str
-  required_role: int/str/enum?
-  template: str
-  cooldown: int
-  game: int
-  version: int
-timers:
-  command_name: str
-  game: int
+  commands:
+    name: str
+    required_role: int/str/enum?
+    template: str
+    cooldown: int
+    game: int
+    version: int
+  timers:
+    command_name: str
+    game: int
 users:
-  user_id: int
-  role: int/str/enum?
-  minutes: int
-  login: str
+  user_id:
+    # Base User
+    role: int/str/enum?
+    login: str
+    # ChatUser
+    minutes: int
+    # WebUser
+    expires_at: datetime
+    refresh_token: str
+    access_token: str
+    token_type: str
+    login_uuid: uuid
+
+
 
 
 

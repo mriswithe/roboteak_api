@@ -1,16 +1,30 @@
 from datetime import timedelta
-from typing import Optional, TYPE_CHECKING
+from typing import ClassVar, Optional, TYPE_CHECKING
 
 from pydantic import BaseModel
 
 from twitch_enums import Roles
+from .firestore_models import FirestoreMixin
 from .game_model import TwitchGame
 
 if TYPE_CHECKING:
     from google.cloud.firestore_v1 import DocumentSnapshot
 
 
-class Command(BaseModel):
+class FSCommandMixin(FirestoreMixin):
+    name: str
+    game: int
+
+    @property
+    def collection_path(self):
+        return f"games/{self.game}/commands"
+
+    @property
+    def document_path(self):
+        return f"{self.collection_path}/{self.name}"
+
+
+class Command(BaseModel, FSCommandMixin):
     name: str
     template: str
     game: int = 0

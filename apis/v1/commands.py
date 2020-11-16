@@ -1,10 +1,11 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from google.cloud.firestore_v1 import DocumentSnapshot
+from google.cloud.exceptions import Conflict
+from google.cloud.firestore_v1 import DocumentReference, DocumentSnapshot
 
 from models.command_models import Command, PatchCommand
-from .deps.command_deps import fs_snap_exists, fs_snap_from_command
+from .deps.command_deps import fs_ref_from_command, fs_snap_exists, fs_snap_from_command
 
 router = APIRouter()
 
@@ -13,21 +14,22 @@ router = APIRouter()
 async def get_command(
     snap: DocumentSnapshot = Depends(fs_snap_exists),
 ):
-    return Command(name=snap.id, **snap.to_dict())
+    return Command.from_snap(snap)
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=Command)
 async def create_command(
-    cmd: Command, snap: DocumentSnapshot = Depends(fs_snap_from_command)
+    cmd: Command, ref: DocumentReference = Depends(fs_ref_from_command)
 ):
-    if snap.exists:
+    try:
+        ref.create(cmd.to_snap())
+    except Conflict:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Command '{cmd.name}' already exists for game {cmd.game}",
-        )
-    snap.reference.create(cmd.to_snap())
-    snap = snap.reference.get()
-    return Command.from_snap(snap)
+        ) from None
+
+    return Command.from_snap(ref.get())
 
 
 @router.put("", response_model=Command)

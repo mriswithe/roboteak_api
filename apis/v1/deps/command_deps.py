@@ -1,26 +1,23 @@
 from typing import Optional, Union
 
 from fastapi import Depends, HTTPException, status
-from google.cloud.firestore import CollectionReference
-from google.cloud.firestore_v1 import DocumentSnapshot
+from google.cloud.firestore_v1 import DocumentReference, DocumentSnapshot
 
 from models import Command
 from models.command_models import PatchCommand
-from .fs_client import _COMMON_CLIENT
-
-
-async def fs_cmd_game_col(game: Optional[int] = 0) -> CollectionReference:
-    return _COMMON_CLIENT.collection(f"games/{game}/commands")
+from .fs_deps import fs_get_doc_snap, fs_get_doc_ref
 
 
 async def fs_cmd_get_snap(name: str, game: Optional[int] = 0) -> DocumentSnapshot:
-    col_ref = await fs_cmd_game_col(game)
-    snap = col_ref.document(name).get()
-    return snap
+    return await fs_get_doc_snap(f"games/{game}/commands/{name}")
 
 
 async def fs_snap_from_command(cmd: Command) -> DocumentSnapshot:
-    return await fs_cmd_get_snap(cmd.name, cmd.game)
+    return await fs_get_doc_snap(cmd.document_path)
+
+
+async def fs_ref_from_command(cmd: Command) -> DocumentReference:
+    return await fs_get_doc_ref(cmd.document_path)
 
 
 async def fs_snap_exists(
