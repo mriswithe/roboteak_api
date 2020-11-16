@@ -1,7 +1,7 @@
 from datetime import timedelta
-from typing import ClassVar, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 from twitch_enums import Roles
 from .firestore_models import FirestoreMixin
@@ -25,8 +25,8 @@ class FSCommandMixin(FirestoreMixin):
 
 
 class Command(BaseModel, FSCommandMixin):
-    name: str
-    template: str
+    name: constr(min_length=1)
+    template: constr(min_length=1, max_length=450)
     game: int = 0
     cooldown: timedelta = timedelta(seconds=5)
     required_role: Roles = Roles.GUEST
