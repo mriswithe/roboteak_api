@@ -26,7 +26,7 @@ class FBCommandInterface(AbstractModelInterface):
     ) -> model:
         return self.model.from_snap(await self._get_snap(name, game))
 
-    async def create(self, new_model: model):
+    async def create(self, new_model: model) -> model:
         ref = await self._get_ref(new_model.name, new_model.game)
         try:
             await ref.create(new_model.to_snap())
@@ -45,7 +45,11 @@ class FBCommandInterface(AbstractModelInterface):
     ) -> model:
         snap = await self._get_snap(name, game)
         current_model = self.model.from_snap(snap)
-        updated_model = current_model.copy(update=changes.dict())
+        updated_model = current_model.copy(
+            update=changes.dict(
+                exclude_none=True, exclude_unset=True, exclude_defaults=True
+            )
+        )
         if (
             current_model.name != updated_model.name
             or current_model.game != updated_model.game
