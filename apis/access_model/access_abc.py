@@ -24,7 +24,8 @@ class AbstractModelInterface(ABC):
         """
         Create a new model in the backend for provided model
         :param model: Instance of the model to be created
-        :return: model: Interpret the model from the DB and return it, should match input
+        :return: model: Interpret the model from the DB and return it, should match
+        input model
         :raises: HTTPException 409 if command already exists
         """
         pass
@@ -55,4 +56,11 @@ class AbstractModelInterface(ABC):
 
     @abstractmethod
     async def query_by_game(self, game: int, include_global=True) -> List[model]:
+        """
+        Return all of the models that match for the specified game, by default also
+        return the "global" commands (game ID 0) unless otherwise specified
+        :param game:
+        :param include_global:
+        :return:
+        """
         pass
